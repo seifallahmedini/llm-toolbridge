@@ -11,12 +11,12 @@ This document tracks the tasks for the LLM Tool Bridge project. Each task should
 ## Phase 1: Initial Setup and Architecture
 
 - 🟢 Set up repository structure (April 1, 2025)
-- ⚪ Create virtual environment and requirements.txt/setup.py
-- ⚪ Create README.md with project description and setup instructions
-- ⚪ Define core package structure and modules
-- ⚪ Outline base interfaces for providers and tools
-- ⚪ Create base schema classes for requests and responses using Pydantic
-- ⚪ Implement initial configuration handling
+- 🟢 Create virtual environment and requirements.txt/setup.py (April 1, 2025)
+- 🟢 Create README.md with project description and setup instructions (April 1, 2025)
+- 🟢 Define core package structure and modules (April 1, 2025)
+- 🟢 Outline base interfaces for providers and tools (April 1, 2025)
+- 🟢 Create base schema classes for requests and responses using Pydantic (April 1, 2025)
+- 🟢 Implement initial configuration handling (April 1, 2025)
 
 ## Phase 2: Integration with Azure OpenAI
 
