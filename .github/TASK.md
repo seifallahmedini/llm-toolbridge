@@ -31,12 +31,12 @@ This document tracks the tasks for the LLM Tool Bridge project. Each task should
 
 - 🟢 Design the unified tool calling API (April 2, 2025)
 - 🟢 Create usage examples for both provider and adapter implementations (April 2, 2025)
-- ⚪ Implement base provider adapter interface
-- ⚪ Create Azure OpenAI adapter implementation
+- 🟢 Implement base provider adapter interface (April 2, 2025)
+- 🟢 Create Azure OpenAI adapter implementation (April 2, 2025)
 - ⚪ Implement standard OpenAI adapter
 - ⚪ Develop plugin/extension system for providers
-- ⚪ Implement multiple tool calling capability
-- ⚪ Create utility for tool registration and discovery
+- 🟢 Implement multiple tool calling capability (April 2, 2025)
+- 🟢 Create utility for tool registration and discovery (April 2, 2025)
 
 ## Phase 4: Advanced Features
 
