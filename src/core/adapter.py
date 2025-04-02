@@ -167,33 +167,48 @@ class BaseProviderAdapter(Generic[T, R], ABC):
         Args:
             prompt: The prompt to send to the LLM.
             tools: Optional list of tools to make available to the LLM.
-            max_tool_calls: Maximum number of tool calls to allow.
+            max_tool_calls: Maximum number of tool calls to allow (prevents infinite loops).
             **kwargs: Additional parameters for the LLM.
             
         Returns:
-            The final LLM response.
+            The final LLM response after processing all tool calls.
+            
+        Raises:
+            ValueError: If max_tool_calls is less than 1.
+            RuntimeError: If tool processing fails unexpectedly.
         """
+        if max_tool_calls < 1:
+            raise ValueError("max_tool_calls must be at least 1")
+            
         tools_dict = {tool.name: tool for tool in (tools or [])}
         tool_results = {}
-        call_count = 0
         
-        # Prepare and execute initial request
-        request = self.prepare_request(prompt, tools, **kwargs)
-        response_obj = self.execute_request(request)
-        llm_response = self.parse_response(response_obj)
-        
-        # Handle tool calls if present
-        while llm_response.tool_calls and call_count < max_tool_calls:
-            call_count += 1
-            
-            # Process all tool calls
-            for tool_call in llm_response.tool_calls:
-                result = self.process_tool_call(tool_call, tools_dict)
-                tool_results[tool_call.call_id or tool_call.tool_name] = result
-                
-            # Prepare and execute follow-up request with tool results
-            request = self.prepare_request(prompt, tools, tool_results, **kwargs)
+        try:
+            # Prepare and execute initial request with tools
+            request = self.prepare_request(prompt, tools, **kwargs)
             response_obj = self.execute_request(request)
             llm_response = self.parse_response(response_obj)
             
-        return llm_response
+            # Process tool calls if present
+            if llm_response.tool_calls:
+                # Track processed tool calls for debugging
+                processed_tools = []
+                
+                # Process all tool calls from the response
+                for tool_call in llm_response.tool_calls[:max_tool_calls]:
+                    result = self.process_tool_call(tool_call, tools_dict)
+                    call_id = tool_call.call_id or tool_call.tool_name
+                    tool_results[call_id] = result
+                    processed_tools.append(tool_call.tool_name)
+                
+                # Send follow-up request with tool results (without tools to avoid API errors)
+                if tool_results:
+                    request = self.prepare_request(prompt, None, tool_results, **kwargs)
+                    response_obj = self.execute_request(request)
+                    llm_response = self.parse_response(response_obj)
+            
+            return llm_response
+            
+        except Exception as e:
+            # Add context to any exceptions
+            raise RuntimeError(f"Tool execution failed: {str(e)}") from e

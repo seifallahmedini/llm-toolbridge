@@ -116,7 +116,7 @@ class AzureOpenAIProvider(Provider):
             for tool_id, result in tool_results.items():
                 # Add result as tool response
                 messages.append({
-                    "role": "tool",
+                    "role": "assistant",
                     "tool_call_id": tool_id,
                     "content": json.dumps(result)
                 })

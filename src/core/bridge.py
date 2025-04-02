@@ -167,7 +167,7 @@ class ToolBridge:
             # Generate a new response with the tool results
             response = await provider.generate(
                 prompt=prompt,
-                tools=tools,
+                tools=[],
                 tool_results=tool_results,
                 **kwargs
             )

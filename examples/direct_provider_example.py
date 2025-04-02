@@ -7,7 +7,11 @@ direct Provider interface for Azure OpenAI.
 
 import asyncio
 import os
+import sys
 from typing import Dict, Any
+
+# Add parent directory to the Python path so we can import from 'src'
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.core.bridge import ToolBridge
 from src.core.tool import Tool, ParameterDefinition

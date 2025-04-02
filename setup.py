@@ -33,3 +33,12 @@ setup(
         "Programming Language :: Python :: 3.11",
     ],
 )
+
+if __name__ == "__main__":
+    import sys
+    
+    if len(sys.argv) <= 1:
+        print("Error: No arguments provided.")
+        print("Please use `pip install .` or `pip install -e .` to install this package")
+        sys.exit(1)
+    # If we have arguments, let setuptools handle them normally
