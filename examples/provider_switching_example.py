@@ -14,10 +14,14 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.core.bridge import ToolBridge
 from src.core.tool import Tool, ParameterDefinition
-from src.core.adapter import BaseProviderAdapter, ProviderCapabilities
 from src.core.adapter_registry import AdapterRegistry
 from src.core.provider import Provider, LLMResponse, ProviderConfig, ToolCall
 from src.providers.azure_openai import AzureOpenAIProvider, AzureOpenAIConfig
+
+# Import adapters from the new adapters module
+from src.adapters.azure_openai import AzureOpenAIAdapter
+from src.core.adapter import BaseProviderAdapter, ProviderCapabilities
+
 from src.utils.env_loader import load_dotenv, get_env_var
 
 
@@ -39,60 +43,6 @@ def calculator(operation: str, x: float, y: float) -> Dict[str, Any]:
         return {"error": f"Unknown operation: {operation}", "result": None}
     
     return {"operation": operation, "x": x, "y": y, "result": result}
-
-
-# Define Azure OpenAI adapter
-class AzureOpenAIAdapter(BaseProviderAdapter):
-    """Adapter for Azure OpenAI."""
-    
-    def __init__(self, provider: Provider):
-        """Initialize the adapter with a provider."""
-        self.provider = provider
-        
-    def get_capabilities(self) -> ProviderCapabilities:
-        """Get the capabilities of this provider."""
-        return ProviderCapabilities(
-            supports_tool_calling=True,
-            supports_multiple_tools=True,
-            supports_streaming=False,
-            max_tokens_limit=4096
-        )
-    
-    def prepare_request(
-        self, 
-        prompt: str, 
-        tools: Optional[List[Tool]] = None,
-        tool_results: Optional[Dict[str, Any]] = None, 
-        **kwargs
-    ) -> Dict[str, Any]:
-        """Prepare a provider-specific request."""
-        request = {
-            "prompt": prompt,
-            "tools": tools,
-            "tool_results": tool_results,
-            **kwargs
-        }
-        return request
-    
-    def execute_request(self, request: Dict[str, Any]) -> Any:
-        """Execute a prepared request using the provider."""
-        prompt = request.pop("prompt")
-        tools = request.pop("tools", None)
-        tool_results = request.pop("tool_results", None)
-        
-        if isinstance(self.provider, AzureOpenAIProvider):
-            return self.provider._generate_sync(
-                prompt=prompt, 
-                tools=tools, 
-                tool_results=tool_results, 
-                **request
-            )
-        else:
-            raise TypeError("This adapter only works with AzureOpenAIProvider")
-    
-    def parse_response(self, response: Any) -> LLMResponse:
-        """Parse a provider-specific response into our standard format."""
-        return response
 
 
 # Mock provider and adapter for demonstration
@@ -162,6 +112,7 @@ class MockAdapter(BaseProviderAdapter):
             supports_tool_calling=True,
             supports_multiple_tools=True,
             supports_streaming=True,
+            supports_vision=False,
             max_tokens_limit=8192  # Different from Azure OpenAI
         )
     
@@ -234,6 +185,7 @@ def run_example_with_provider(provider_name: str):
             api_version=get_env_var("AZURE_OPENAI_API_VERSION", "2023-12-01-preview")
         )
         provider = AzureOpenAIProvider(config)
+        # Use the adapter from the new adapter module
         adapter = AzureOpenAIAdapter(provider)
     else:  # mock provider
         config = MockConfig(always_use_tools=True)
@@ -274,6 +226,7 @@ def run_example_with_provider(provider_name: str):
     print(f"  Tool calling: {capabilities.supports_tool_calling}")
     print(f"  Multiple tools: {capabilities.supports_multiple_tools}")
     print(f"  Streaming: {capabilities.supports_streaming}")
+    print(f"  Vision: {capabilities.supports_vision}")
     print(f"  Max tokens: {capabilities.max_tokens_limit}")
     
     # Create a prompt that will use the calculator tool
@@ -321,8 +274,9 @@ def main():
     else:
         print("⚠️ No .env file found. Using default values or explicit environment variables.")
     
-    # Register our adapters
-    AdapterRegistry.register("azure_openai", AzureOpenAIAdapter)
+    # Register our adapters - note that we're now registering manually since
+    # we're demonstrating the registration process in this example
+    # AdapterRegistry.register("azure_openai", AzureOpenAIAdapter)
     AdapterRegistry.register("mock", MockAdapter)
     
     # List available providers

@@ -15,7 +15,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.core.bridge import ToolBridge
 from src.core.tool import Tool, ParameterDefinition
 from src.providers.openai import OpenAIProvider, OpenAIConfig
-from src.providers.openai_adapter import OpenAIAdapter
+# Update the import to use our new adapter location
+from src.adapters.openai import OpenAIAdapter
 from src.utils.env_loader import load_dotenv, get_env_var
 
 
@@ -62,7 +63,7 @@ def main():
     # Create the provider
     provider = OpenAIProvider(config)
     
-    # Create the adapter for the provider
+    # Create the adapter for the provider using the new adapter path
     adapter = OpenAIAdapter(provider)
     
     # Create the tool bridge with the adapter

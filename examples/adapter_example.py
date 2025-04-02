@@ -15,9 +15,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.core.bridge import ToolBridge
 from src.core.tool import Tool, ParameterDefinition
-from src.core.adapter import BaseProviderAdapter, ProviderCapabilities
-from src.core.provider import Provider, LLMResponse
 from src.providers.azure_openai import AzureOpenAIProvider, AzureOpenAIConfig
+from src.adapters.azure_openai import AzureOpenAIAdapter
 from src.utils.env_loader import load_dotenv, get_env_var
 
 
@@ -39,67 +38,6 @@ def calculator(operation: str, x: float, y: float) -> Dict[str, Any]:
         return {"error": f"Unknown operation: {operation}", "result": None}
     
     return {"operation": operation, "x": x, "y": y, "result": result}
-
-
-# Define our Azure OpenAI adapter
-class AzureOpenAIAdapter(BaseProviderAdapter):
-    """Adapter for Azure OpenAI."""
-    
-    def __init__(self, provider: Provider):
-        """Initialize the adapter with a provider."""
-        self.provider = provider
-        
-    def get_capabilities(self) -> ProviderCapabilities:
-        """Get the capabilities of this provider."""
-        return ProviderCapabilities(
-            supports_tool_calling=True,
-            supports_multiple_tools=True,
-            supports_streaming=False,
-            supports_vision=False,
-            max_tokens_limit=4096
-        )
-    
-    def prepare_request(
-        self, 
-        prompt: str, 
-        tools: Optional[List[Tool]] = None,
-        tool_results: Optional[Dict[str, Any]] = None, 
-        **kwargs
-    ) -> Dict[str, Any]:
-        """Prepare a provider-specific request."""
-        # For Azure OpenAI, we'll simply structure the request params
-        # as expected by the provider
-        request = {
-            "prompt": prompt,
-            "tools": tools,
-            "tool_results": tool_results,
-            **kwargs
-        }
-        return request
-    
-    def execute_request(self, request: Dict[str, Any]) -> Any:
-        """Execute a prepared request using the provider."""
-        # Just extract the parameters from our request dict
-        prompt = request.pop("prompt")
-        tools = request.pop("tools", None)
-        tool_results = request.pop("tool_results", None)
-        
-        # Use the provider's _generate_sync method for simplicity
-        # In a real implementation, we might do more processing here
-        if isinstance(self.provider, AzureOpenAIProvider):
-            return self.provider._generate_sync(
-                prompt=prompt, 
-                tools=tools, 
-                tool_results=tool_results, 
-                **request
-            )
-        else:
-            raise TypeError("This adapter only works with AzureOpenAIProvider")
-    
-    def parse_response(self, response: Any) -> LLMResponse:
-        """Parse a provider-specific response into our standard format."""
-        # For Azure OpenAI, the response is already in our LLMResponse format
-        return response
 
 
 def main():
@@ -125,7 +63,7 @@ def main():
     # Create the provider
     provider = AzureOpenAIProvider(config)
     
-    # Create the adapter
+    # Create the adapter using our new import from src.adapters
     adapter = AzureOpenAIAdapter(provider)
     
     # Create the tool bridge with the adapter
