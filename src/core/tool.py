@@ -60,22 +60,39 @@ class Tool(BaseModel):
             "parameters": {
                 "type": "object",
                 "properties": {},
-                "required": []
-            },
-            "version": self.version,
+                "required": [],
+                "additionalProperties": False
+            }
+            # "version": self.version,
         }
 
         for param_name, param_def in self.parameters.items():
             if isinstance(param_def, dict):
-                result["parameters"]["properties"][param_name] = param_def
-                if param_def.get("required", True):
+                # Make a copy to avoid modifying the original dict
+                param_dict = param_def.copy()
+                # Remove null values from parameter definition
+                param_dict = {k: v for k, v in param_dict.items() if v is not None}
+                # Ensure enum is never null but a list or removed entirely
+                if "enum" in param_dict and param_dict["enum"] is None:
+                    del param_dict["enum"]
+                result["parameters"]["properties"][param_name] = param_dict
+                if param_dict.get("required", True):
                     result["parameters"]["required"].append(param_name)
             else:
-                result["parameters"]["properties"][param_name] = param_def.model_dump(
-                    exclude={"required"}
-                )
+                # Convert Pydantic model to dict excluding the required field
+                param_dict = param_def.model_dump(exclude={"required"})
+                # Remove any None values that can cause schema validation issues
+                param_dict = {k: v for k, v in param_dict.items() if v is not None}
+                # Ensure enum is never null but a list or removed entirely
+                if "enum" in param_dict and param_dict["enum"] is None:
+                    del param_dict["enum"]
+                result["parameters"]["properties"][param_name] = param_dict
                 if param_def.required:
                     result["parameters"]["required"].append(param_name)
+
+        # Ensure parameters.required is not empty to prevent Azure OpenAI errors
+        if not result["parameters"]["required"]:
+            del result["parameters"]["required"]
 
         return result
 
