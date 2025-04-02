@@ -64,10 +64,15 @@ response = bridge.execute_sync(
 print(response)
 ```
 
-For detailed information about each component, refer to the specific documentation pages:
+## Documentation
 
+### Core Components
 - [Tool Bridge](./core/bridge.md)
 - [Provider Interface](./core/provider.md)
 - [Tool Classes](./core/tool.md)
 - [Configuration](./core/config.md)
 - [Schema Classes](./core/schema.md)
+
+### Providers
+- [Provider Documentation](./providers/index.md)
+- [Azure OpenAI Provider](./providers/azure_openai.md)

@@ -24,7 +24,7 @@ This document tracks the tasks for the LLM Tool Bridge project. Each task should
 - 🟢 Create authentication utilities for Azure OpenAI (April 1, 2025)
 - 🟢 Develop request formatter for Azure OpenAI tool calls (April 1, 2025)
 - 🟢 Create response parser for Azure OpenAI tool call responses (April 1, 2025)
-- 🟡 Write documentation for Azure OpenAI setup and usage
+- 🟢 Write documentation for Azure OpenAI setup and usage (April 2, 2025)
 - 🟢 Implement basic error handling for API interactions (April 1, 2025)
 
 ## Phase 3: Abstracted Function Calling Interface
