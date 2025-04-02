@@ -89,10 +89,18 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -e ".[dev]"
 ```
 
-### Run Tests
+### Testing
+
+For detailed instructions on running tests, see [TESTING.md](TESTING.md).
+
+Quick testing commands:
 
 ```bash
+# Run all tests
 pytest
+
+# Run with coverage report
+pytest --cov=src
 ```
 
 ## Contributing
