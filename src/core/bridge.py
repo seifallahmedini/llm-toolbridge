@@ -5,10 +5,11 @@ This module provides the main ToolBridge class that serves as the primary
 interface for interacting with LLM providers and tools.
 """
 
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union, Type
 import asyncio
 
 from src.core.provider import Provider, LLMResponse, ToolCall
+from src.core.adapter import BaseProviderAdapter
 from src.core.tool import Tool
 
 
@@ -20,14 +21,14 @@ class ToolBridge:
     the library, handling the communication between tools and LLM providers.
     """
     
-    def __init__(self, provider: Provider):
+    def __init__(self, provider_or_adapter: Union[Provider, BaseProviderAdapter]):
         """
-        Initialize the ToolBridge with a provider.
+        Initialize the ToolBridge with a provider or adapter.
         
         Args:
-            provider: The LLM provider to use for generating responses.
+            provider_or_adapter: The LLM provider or adapter to use for generating responses.
         """
-        self.provider = provider
+        self.provider_or_adapter = provider_or_adapter
         self.tools: Dict[str, Tool] = {}
         
     def register_tool(self, tool: Tool) -> None:
@@ -80,7 +81,8 @@ class ToolBridge:
         self, 
         prompt: str, 
         tools: Optional[List[Union[Tool, str]]] = None,
-        max_tool_calls: int = 10
+        max_tool_calls: int = 10,
+        **kwargs
     ) -> LLMResponse:
         """
         Execute the LLM with the given prompt and tools.
@@ -94,6 +96,7 @@ class ToolBridge:
                    Can be Tool objects or names of registered tools.
             max_tool_calls: Maximum number of tool calls to allow before 
                            returning the response to avoid infinite loops.
+            **kwargs: Additional provider-specific parameters.
                            
         Returns:
             The final LLM response.
@@ -101,8 +104,43 @@ class ToolBridge:
         # Resolve tool names to actual tool objects
         resolved_tools = self._resolve_tools(tools)
         
+        # Use the adapter if available, otherwise use direct provider approach
+        if isinstance(self.provider_or_adapter, BaseProviderAdapter):
+            # For async execution, we need to wrap the adapter's synchronous methods
+            return await asyncio.to_thread(
+                self.provider_or_adapter.execute_with_tools,
+                prompt,
+                resolved_tools,
+                max_tool_calls,
+                **kwargs
+            )
+        else:
+            # Legacy direct provider approach
+            return await self._execute_with_provider(prompt, resolved_tools, max_tool_calls, **kwargs)
+    
+    async def _execute_with_provider(
+        self,
+        prompt: str,
+        tools: List[Tool],
+        max_tool_calls: int,
+        **kwargs
+    ) -> LLMResponse:
+        """
+        Execute with direct provider implementation (legacy approach).
+        
+        Args:
+            prompt: The prompt to send to the LLM.
+            tools: List of resolved Tool objects.
+            max_tool_calls: Maximum number of tool calls to allow.
+            **kwargs: Additional provider-specific parameters.
+            
+        Returns:
+            The final LLM response.
+        """
+        provider = self.provider_or_adapter  # Provider instance
+        
         # Initial generation
-        response = await self.provider.generate(prompt=prompt, tools=resolved_tools)
+        response = await provider.generate(prompt=prompt, tools=tools, **kwargs)
         
         # Handle tool calls, if any
         tool_results = {}
@@ -127,10 +165,11 @@ class ToolBridge:
                     }
                     
             # Generate a new response with the tool results
-            response = await self.provider.generate(
+            response = await provider.generate(
                 prompt=prompt,
-                tools=resolved_tools,
-                tool_results=tool_results
+                tools=tools,
+                tool_results=tool_results,
+                **kwargs
             )
             
         return response
@@ -168,7 +207,8 @@ class ToolBridge:
         self, 
         prompt: str, 
         tools: Optional[List[Union[Tool, str]]] = None,
-        max_tool_calls: int = 10
+        max_tool_calls: int = 10,
+        **kwargs
     ) -> LLMResponse:
         """
         Synchronous version of execute.
@@ -177,8 +217,19 @@ class ToolBridge:
             prompt: The prompt to send to the LLM.
             tools: Optional list of tools to make available to the LLM.
             max_tool_calls: Maximum number of tool calls to allow.
+            **kwargs: Additional provider-specific parameters.
             
         Returns:
             The final LLM response.
         """
-        return asyncio.run(self.execute(prompt, tools, max_tool_calls))
+        # If we have an adapter, we can use its synchronous method directly
+        if isinstance(self.provider_or_adapter, BaseProviderAdapter):
+            resolved_tools = self._resolve_tools(tools)
+            return self.provider_or_adapter.execute_with_tools(
+                prompt, 
+                resolved_tools, 
+                max_tool_calls,
+                **kwargs
+            )
+        # Otherwise, use the async method with asyncio.run
+        return asyncio.run(self.execute(prompt, tools, max_tool_calls, **kwargs))

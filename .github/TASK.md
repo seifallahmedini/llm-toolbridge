@@ -29,7 +29,8 @@ This document tracks the tasks for the LLM Tool Bridge project. Each task should
 
 ## Phase 3: Abstracted Function Calling Interface
 
-- ⚪ Design the unified tool calling API
+- 🟢 Design the unified tool calling API (April 2, 2025)
+- 🟢 Create usage examples for both provider and adapter implementations (April 2, 2025)
 - ⚪ Implement base provider adapter interface
 - ⚪ Create Azure OpenAI adapter implementation
 - ⚪ Implement standard OpenAI adapter
@@ -67,4 +68,5 @@ This document tracks the tasks for the LLM Tool Bridge project. Each task should
 ## Discovered During Work
 - 🟢 Created requirements.txt and setup.py files (April 1, 2025)
 - 🟢 Created README.md with project description and setup instructions (April 1, 2025)
+- 🟢 Added provider adapter registry for dynamic provider selection (April 2, 2025)
 <!-- New tasks discovered during development will be added here -->
