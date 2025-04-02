@@ -16,7 +16,7 @@ from src.core.bridge import ToolBridge
 from src.core.tool import Tool, ParameterDefinition
 from src.core.adapter import BaseProviderAdapter, ProviderCapabilities
 from src.core.adapter_registry import AdapterRegistry
-from src.core.provider import Provider, LLMResponse, ProviderConfig
+from src.core.provider import Provider, LLMResponse, ProviderConfig, ToolCall
 from src.providers.azure_openai import AzureOpenAIProvider, AzureOpenAIConfig
 from src.utils.env_loader import load_dotenv, get_env_var
 
@@ -144,7 +144,7 @@ class MockProvider(Provider):
         """Format tools for the mock provider."""
         return [tool.to_dict() for tool in tools]
     
-    def parse_tool_calls(self, raw_response: Any) -> List[LLMResponse.ToolCall]:
+    def parse_tool_calls(self, raw_response: Any) -> List[ToolCall]:
         """Parse tool calls from the raw response."""
         return []
 
@@ -194,7 +194,7 @@ class MockAdapter(BaseProviderAdapter):
                 return LLMResponse(
                     content=None,
                     tool_calls=[
-                        LLMResponse.ToolCall(
+                        ToolCall(
                             tool_name=tool.name,
                             arguments={"operation": "multiply", "x": 5.2, "y": 3.8},
                             call_id="mock_call_1"
