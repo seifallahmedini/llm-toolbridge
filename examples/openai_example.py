@@ -9,15 +9,26 @@ import os
 import sys
 from typing import Dict, Any
 
-# Add parent directory to the Python path so we can import from 'src'
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from src.core.bridge import ToolBridge
-from src.core.tool import Tool, ParameterDefinition
-from src.providers.openai import OpenAIProvider, OpenAIConfig
-# Update the import to use our new adapter location
-from src.adapters.openai import OpenAIAdapter
-from src.utils.env_loader import load_dotenv, get_env_var
+# Try importing directly (works when package is installed)
+try:
+    from llm_toolbridge.core.bridge import ToolBridge
+    from llm_toolbridge.core.tool import Tool, ParameterDefinition
+    from llm_toolbridge.providers.openai import OpenAIProvider, OpenAIConfig
+    from llm_toolbridge.adapters.openai import OpenAIAdapter
+    from llm_toolbridge.utils.env_loader import load_dotenv, get_env_var
+    
+    print("✅ Using installed package imports")
+except ImportError:
+    # Fall back to development imports if package is not installed
+    print("⚠️ Package not installed, using development imports")
+    # Add parent directory to the Python path so we can import from 'src'
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    
+    from src.core.bridge import ToolBridge
+    from src.core.tool import Tool, ParameterDefinition
+    from src.providers.openai import OpenAIProvider, OpenAIConfig
+    from src.adapters.openai import OpenAIAdapter
+    from src.utils.env_loader import load_dotenv, get_env_var
 
 
 # Define a simple calculator tool
@@ -67,7 +78,7 @@ def main():
     adapter = OpenAIAdapter(provider)
     
     # Create the tool bridge with the adapter
-    bridge = ToolBridge(adapter)
+    bridge = ToolBridge(adapter=adapter)
     
     # Define the calculator tool
     calculator_tool = Tool(
