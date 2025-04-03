@@ -5,7 +5,7 @@ This section contains documentation for all supported LLM providers in the LLM T
 ## Available Providers
 
 - [Azure OpenAI](./azure_openai.md) - Connect to Azure-hosted OpenAI models with enterprise features
-- [More providers coming soon...]
+- [OpenAI](./openai.md) - Connect directly to OpenAI's API for their latest models
 
 ## Provider Interface
 
