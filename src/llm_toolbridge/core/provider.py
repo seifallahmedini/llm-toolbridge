@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel
 
-from src.core.tool import Tool
+from .tool import Tool
 
 
 class ProviderConfig(BaseModel):

@@ -11,8 +11,8 @@ from typing import Any, Dict, List, Optional, Union
 from openai import AzureOpenAI
 from pydantic import BaseModel, Field
 
-from src.core.provider import Provider, ProviderConfig, LLMResponse, ToolCall
-from src.core.tool import Tool
+from ..core.provider import Provider, ProviderConfig, LLMResponse, ToolCall
+from ..core.tool import Tool
 
 
 logger = logging.getLogger(__name__)

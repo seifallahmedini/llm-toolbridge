@@ -8,9 +8,9 @@ interface for interacting with LLM providers and tools.
 from typing import Any, Callable, Dict, List, Optional, Union, Type
 import asyncio
 
-from src.core.provider import Provider, LLMResponse, ToolCall
-from src.core.adapter import BaseProviderAdapter
-from src.core.tool import Tool
+from .provider import Provider, LLMResponse, ToolCall
+from .adapter import BaseProviderAdapter
+from .tool import Tool
 
 
 class ToolBridge:

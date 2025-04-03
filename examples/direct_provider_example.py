@@ -13,10 +13,24 @@ from typing import Dict, Any
 # Add parent directory to the Python path so we can import from 'src'
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.core.bridge import ToolBridge
-from src.core.tool import Tool, ParameterDefinition
-from src.providers.azure_openai import AzureOpenAIProvider, AzureOpenAIConfig
-from src.utils.env_loader import load_dotenv, get_env_var
+# Try importing directly (works when package is installed)
+try:
+    from llm_toolbridge.core.bridge import ToolBridge
+    from llm_toolbridge.core.tool import Tool, ParameterDefinition
+    from llm_toolbridge.providers.azure_openai import AzureOpenAIProvider, AzureOpenAIConfig
+    from llm_toolbridge.utils.env_loader import load_dotenv, get_env_var
+    
+    print("✅ Using installed package imports")
+except ImportError:
+    # Fall back to development imports if package is not installed
+    print("⚠️ Package not installed, using development imports")
+    # Add parent directory to the Python path so we can import from 'src'
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    
+    from src.llm_toolbridge.core.bridge import ToolBridge
+    from src.llm_toolbridge.core.tool import Tool, ParameterDefinition
+    from src.llm_toolbridge.providers.azure_openai import AzureOpenAIProvider, AzureOpenAIConfig
+    from src.llm_toolbridge.utils.env_loader import load_dotenv, get_env_var
 
 
 # Define a simple calculator tool

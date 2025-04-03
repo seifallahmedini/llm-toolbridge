@@ -8,7 +8,7 @@ formats used throughout the LLM Tool Bridge library.
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
 
-from src.core.tool import Tool
+from .tool import Tool
 
 
 class ToolBridgeRequest(BaseModel):

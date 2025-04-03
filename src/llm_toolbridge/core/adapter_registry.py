@@ -9,8 +9,8 @@ a unified interface.
 from typing import Dict, Optional, Type, TypeVar, Generic, Any, Union
 import importlib
 
-from src.core.adapter import BaseProviderAdapter
-from src.core.provider import Provider, ProviderConfig
+from .adapter import BaseProviderAdapter
+from .provider import Provider, ProviderConfig
 
 
 T = TypeVar('T', bound=BaseProviderAdapter)

@@ -11,8 +11,8 @@ from typing import Any, Dict, List, Optional, Union, TypeVar, Generic
 
 from pydantic import BaseModel
 
-from src.core.provider import Provider, ProviderConfig, LLMResponse, ToolCall
-from src.core.tool import Tool
+from .provider import Provider, ProviderConfig, LLMResponse, ToolCall
+from .tool import Tool
 
 
 # Type variables for generic typing

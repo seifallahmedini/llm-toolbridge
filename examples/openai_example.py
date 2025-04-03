@@ -24,11 +24,11 @@ except ImportError:
     # Add parent directory to the Python path so we can import from 'src'
     sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     
-    from src.core.bridge import ToolBridge
-    from src.core.tool import Tool, ParameterDefinition
-    from src.providers.openai import OpenAIProvider, OpenAIConfig
-    from src.adapters.openai import OpenAIAdapter
-    from src.utils.env_loader import load_dotenv, get_env_var
+    from src.llm_toolbridge.core.bridge import ToolBridge
+    from src.llm_toolbridge.core.tool import Tool, ParameterDefinition
+    from src.llm_toolbridge.providers.openai import OpenAIProvider, OpenAIConfig
+    from src.llm_toolbridge.adapters.openai import OpenAIAdapter
+    from src.llm_toolbridge.utils.env_loader import load_dotenv, get_env_var
 
 
 # Define a simple calculator tool

@@ -1,38 +1,38 @@
 """
-Azure OpenAI Adapter module.
+OpenAI Adapter module.
 
-This module provides the adapter implementation for the Azure OpenAI provider,
+This module provides the adapter implementation for the OpenAI provider,
 allowing it to be used with the standard ToolBridge interface.
 """
 
 from typing import Any, Dict, List, Optional
 
-from src.core.adapter import BaseProviderAdapter, ProviderCapabilities
-from src.core.provider import Provider, LLMResponse
-from src.core.tool import Tool
-from src.providers.azure_openai import AzureOpenAIProvider
+from ..core.adapter import BaseProviderAdapter, ProviderCapabilities
+from ..core.provider import Provider, LLMResponse
+from ..core.tool import Tool
+from ..providers.openai import OpenAIProvider
 
 
-class AzureOpenAIAdapter(BaseProviderAdapter[Dict[str, Any], Any]):
+class OpenAIAdapter(BaseProviderAdapter[Dict[str, Any], Any]):
     """
-    Adapter implementation for the Azure OpenAI provider.
+    Adapter implementation for the OpenAI provider.
     
     This adapter translates between the standard ToolBridge interface
-    and the specific implementation details of the Azure OpenAI API.
+    and the specific implementation details of the OpenAI API.
     """
     
     def __init__(self, provider: Provider):
         """
-        Initialize the adapter with an Azure OpenAI provider.
+        Initialize the adapter with an OpenAI provider.
         
         Args:
-            provider: The Azure OpenAI provider instance to adapt.
+            provider: The OpenAI provider instance to adapt.
             
         Raises:
-            TypeError: If the provided provider is not an AzureOpenAIProvider.
+            TypeError: If the provided provider is not an OpenAIProvider.
         """
-        if not isinstance(provider, AzureOpenAIProvider):
-            raise TypeError("AzureOpenAIAdapter requires an AzureOpenAIProvider instance")
+        if not isinstance(provider, OpenAIProvider):
+            raise TypeError("OpenAIAdapter requires an OpenAIProvider instance")
         
         self.provider = provider
     
@@ -47,8 +47,8 @@ class AzureOpenAIAdapter(BaseProviderAdapter[Dict[str, Any], Any]):
             supports_tool_calling=True,
             supports_multiple_tools=True,
             supports_streaming=False,
-            supports_vision=True,  # Azure OpenAI models like GPT-4V support vision
-            max_tokens_limit=4096  # Default token limit for Azure OpenAI deployments
+            supports_vision=True,  # OpenAI models like GPT-4V support vision
+            max_tokens_limit=8192  # GPT-4 supports up to 8k tokens by default
         )
     
     def prepare_request(
@@ -68,9 +68,9 @@ class AzureOpenAIAdapter(BaseProviderAdapter[Dict[str, Any], Any]):
             **kwargs: Additional parameters for the request.
             
         Returns:
-            A dictionary containing the request parameters for the Azure OpenAI provider.
+            A dictionary containing the request parameters for the OpenAI provider.
         """
-        # For Azure OpenAI, we'll simply structure the request as a dictionary
+        # For OpenAI, we'll simply structure the request as a dictionary
         # with the parameters expected by the provider
         request = {
             "prompt": prompt,
@@ -92,7 +92,7 @@ class AzureOpenAIAdapter(BaseProviderAdapter[Dict[str, Any], Any]):
             request: The provider-specific request to execute.
             
         Returns:
-            The raw response from the Azure OpenAI provider.
+            The raw response from the OpenAI provider.
             
         Raises:
             Exception: If there's an error executing the request.
@@ -114,7 +114,7 @@ class AzureOpenAIAdapter(BaseProviderAdapter[Dict[str, Any], Any]):
         """
         Parse a provider-specific response into our standard format.
         
-        The Azure OpenAI provider already returns responses in our LLMResponse format,
+        The OpenAI provider already returns responses in our LLMResponse format,
         so we can just pass it through.
         
         Args:
@@ -123,5 +123,5 @@ class AzureOpenAIAdapter(BaseProviderAdapter[Dict[str, Any], Any]):
         Returns:
             A standardized LLMResponse object.
         """
-        # The response from AzureOpenAIProvider is already in LLMResponse format
+        # The response from OpenAIProvider is already in LLMResponse format
         return response
