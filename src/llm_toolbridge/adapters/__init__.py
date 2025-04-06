@@ -20,3 +20,9 @@ try:
     AdapterRegistry.register("azure_openai", AzureOpenAIAdapter)
 except ImportError:
     pass  # Skip if not available
+
+try:
+    from ..adapters.gemini import GeminiAdapter
+    AdapterRegistry.register("gemini", GeminiAdapter)
+except ImportError:
+    pass  # Skip if not available

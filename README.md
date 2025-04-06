@@ -4,12 +4,12 @@ A unified interface for working with tool calling across different LLM providers
 
 ## Overview
 
-LLM Tool Bridge provides a consistent interface to work with function/tool calling capabilities of various LLM providers, such as Azure OpenAI, OpenAI, Anthropic, and others. This library allows developers to define tools once and use them across different providers without having to rewrite code for each one.
+LLM Tool Bridge provides a consistent interface to work with function/tool calling capabilities of various LLM providers, such as Azure OpenAI, OpenAI, Google Gemini, and others. This library allows developers to define tools once and use them across different providers without having to rewrite code for each one.
 
 ## Features
 
 - Unified interface for tool definitions
-- Provider-specific adapters (Azure OpenAI, OpenAI, etc.)
+- Provider-specific adapters (Azure OpenAI, OpenAI, Google Gemini, etc.)
 - Consistent request/response schemas
 - Support for multiple tool calling
 - Type-safe interfaces using Pydantic
@@ -21,7 +21,7 @@ LLM Tool Bridge provides a consistent interface to work with function/tool calli
 pip install llm-toolbridge
 
 # Install from source
-git clone https://github.com/yourusername/llm-toolbridge.git
+git clone https://github.com/seifallahmedini/llm-toolbridge.git
 cd llm-toolbridge
 pip install -e .
 
@@ -72,13 +72,37 @@ response = bridge.execute(
 print(response)
 ```
 
+### Using Google Gemini
+
+You can also use Google's Gemini models with LLM Tool Bridge:
+
+```python
+from llm_toolbridge.providers.gemini import GeminiProvider, GeminiConfig
+from llm_toolbridge.core import Tool, ToolBridge
+
+# Configure the Gemini provider
+provider = GeminiProvider(
+    config=GeminiConfig(
+        api_key="your-google-api-key",
+        model="gemini-1.5-pro"  # or any other Gemini model
+    )
+)
+
+# Create a tool bridge with Gemini provider
+bridge = ToolBridge(provider=provider)
+
+# Register your tools and use as with any other provider
+bridge.register_tool(calculator_tool)
+response = bridge.execute(prompt="What is 42 divided by 6?", tools=[calculator_tool])
+```
+
 ## Development
 
 ### Setup Development Environment
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/llm-toolbridge.git
+git clone https://github.com/seifallahmedini/llm-toolbridge.git
 cd llm-toolbridge
 
 # Create and activate a virtual environment

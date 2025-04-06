@@ -34,7 +34,7 @@ This document tracks the tasks for the LLM Tool Bridge project. Each task should
 - 🟢 Implement base provider adapter interface (April 2, 2025)
 - 🟢 Create Azure OpenAI adapter implementation (April 2, 2025)
 - 🟢 Implement standard OpenAI adapter (April 2, 2025)
-- ⚪ Develop plugin/extension system for providers
+<!-- - ⚪ Develop plugin/extension system for providers -->
 - 🟢 Implement multiple tool calling capability (April 2, 2025)
 - 🟢 Create utility for tool registration and discovery (April 2, 2025)
 
@@ -64,6 +64,10 @@ This document tracks the tasks for the LLM Tool Bridge project. Each task should
 - ⚪ Create contribution guidelines
 - ⚪ Write changelog and release notes
 - ⚪ Conduct beta testing with early adopters
+
+## Additional Provider Integrations
+- 🟢 Implement Google Gemini adapter and tool call support (April 4, 2025)
+- ⚪ Implement DeepSeek adapter and tool call support
 
 ## Discovered During Work
 - 🟢 Created requirements.txt and setup.py files (April 1, 2025)
