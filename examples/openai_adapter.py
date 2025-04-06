@@ -78,7 +78,7 @@ def main():
     adapter = OpenAIAdapter(provider)
     
     # Create the tool bridge with the adapter
-    bridge = ToolBridge(adapter=adapter)
+    bridge = ToolBridge(adapter)
     
     # Define the calculator tool
     calculator_tool = Tool(

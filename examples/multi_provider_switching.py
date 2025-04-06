@@ -288,7 +288,7 @@ def main():
     
     # Register our adapters - note that we're now registering manually since
     # we're demonstrating the registration process in this example
-    AdapterRegistry.register("azure_openai", AzureOpenAIAdapter)
+    # AdapterRegistry.register("azure_openai", AzureOpenAIAdapter)
     AdapterRegistry.register("mock", MockAdapter)
     
     # List available providers
