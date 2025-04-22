@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from src.core.config import ToolBridgeConfig, ConfigManager
+from llm_toolbridge.core.config import ToolBridgeConfig, ConfigManager
 
 
 def test_default_config():

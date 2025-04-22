@@ -7,15 +7,15 @@ from unittest.mock import patch, MagicMock
 
 import pytest
 
-from src.core.tool import Tool, ParameterDefinition
-from src.core.provider import LLMResponse, ToolCall
-from src.providers.openai import OpenAIProvider, OpenAIConfig
+from llm_toolbridge.core.tool import Tool, ParameterDefinition
+from llm_toolbridge.core.provider import LLMResponse, ToolCall
+from llm_toolbridge.providers.openai import OpenAIProvider, OpenAIConfig
 
 
 class TestOpenAIProvider:
     """Tests for the OpenAIProvider class."""
 
-    @patch('src.providers.openai.OpenAI')
+    @patch('llm_toolbridge.providers.openai.OpenAI')
     def test_init(self, mock_openai):
         """Test initialization of the provider."""
         config = OpenAIConfig(
@@ -44,7 +44,7 @@ class TestOpenAIProvider:
             model="gpt-4"
         )
         
-        with patch('src.providers.openai.OpenAI'):
+        with patch('llm_toolbridge.providers.openai.OpenAI'):
             provider = OpenAIProvider(config)
             
             # Create a test tool with ParameterDefinition
@@ -109,7 +109,7 @@ class TestOpenAIProvider:
             model="gpt-4"
         )
         
-        with patch('src.providers.openai.OpenAI'):
+        with patch('llm_toolbridge.providers.openai.OpenAI'):
             provider = OpenAIProvider(config)
             
             # Create a mock OpenAI API response with tool calls
@@ -171,7 +171,7 @@ class TestOpenAIProvider:
             assert len(tool_calls_invalid) == 1
             assert tool_calls_invalid[0].arguments == {"error": "Invalid JSON in arguments"}
     
-    @patch('src.providers.openai.OpenAI')
+    @patch('llm_toolbridge.providers.openai.OpenAI')
     def test_generate_sync_success(self, mock_openai_class):
         """Test successful synchronous generation."""
         config = OpenAIConfig(
@@ -211,7 +211,7 @@ class TestOpenAIProvider:
         assert kwargs["model"] == "gpt-4"
         assert kwargs["messages"][0]["content"] == "Hello, how are you?"
     
-    @patch('src.providers.openai.OpenAI')
+    @patch('llm_toolbridge.providers.openai.OpenAI')
     def test_generate_sync_with_tools(self, mock_openai_class):
         """Test generation with tools."""
         config = OpenAIConfig(
@@ -284,7 +284,7 @@ class TestOpenAIProvider:
         assert len(kwargs["tools"]) == 1
         assert kwargs["tools"][0]["function"]["name"] == "calculator"
     
-    @patch('src.providers.openai.OpenAI')
+    @patch('llm_toolbridge.providers.openai.OpenAI')
     def test_generate_sync_with_tool_results(self, mock_openai_class):
         """Test generation with tool results."""
         config = OpenAIConfig(
@@ -346,7 +346,7 @@ class TestOpenAIProvider:
         assert assistant_message_found
         assert tool_message_found
     
-    @patch('src.providers.openai.OpenAI')
+    @patch('llm_toolbridge.providers.openai.OpenAI')
     def test_generate_sync_error_handling(self, mock_openai_class):
         """Test error handling in generate_sync."""
         config = OpenAIConfig(

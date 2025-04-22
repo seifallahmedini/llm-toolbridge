@@ -8,10 +8,10 @@ from typing import Dict, Any, Optional, List
 
 import pytest
 
-from src.core.provider import Provider, ProviderConfig, LLMResponse, ToolCall
-from src.core.adapter import BaseProviderAdapter, ProviderCapabilities
-from src.core.tool import Tool
-from src.core.adapter_registry import AdapterRegistry
+from llm_toolbridge.core.provider import Provider, ProviderConfig, LLMResponse, ToolCall
+from llm_toolbridge.core.adapter import BaseProviderAdapter, ProviderCapabilities
+from llm_toolbridge.core.tool import Tool
+from llm_toolbridge.core.adapter_registry import AdapterRegistry
 
 
 # Mock request and response types for testing

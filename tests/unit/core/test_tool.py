@@ -5,7 +5,7 @@ Unit tests for the tool module.
 import pytest
 from typing import Dict, Any
 
-from src.core.tool import Tool, ParameterDefinition
+from llm_toolbridge.core.tool import Tool, ParameterDefinition
 
 
 def test_parameter_definition_creation():

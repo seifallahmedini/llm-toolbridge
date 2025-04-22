@@ -7,15 +7,15 @@ from unittest.mock import patch, MagicMock
 
 import pytest
 
-from src.core.tool import Tool, ParameterDefinition
-from src.core.provider import LLMResponse, ToolCall
-from src.providers.azure_openai import AzureOpenAIProvider, AzureOpenAIConfig
+from llm_toolbridge.core.tool import Tool, ParameterDefinition
+from llm_toolbridge.core.provider import LLMResponse, ToolCall
+from llm_toolbridge.providers.azure_openai import AzureOpenAIProvider, AzureOpenAIConfig
 
 
 class TestAzureOpenAIProvider:
     """Tests for the AzureOpenAIProvider class."""
 
-    @patch('src.providers.azure_openai.AzureOpenAI')
+    @patch('llm_toolbridge.providers.azure_openai.AzureOpenAI')
     def test_init(self, mock_azure_openai):
         """Test initialization of the provider."""
         config = AzureOpenAIConfig(
@@ -45,7 +45,7 @@ class TestAzureOpenAIProvider:
             deployment_name="test-deployment"
         )
         
-        with patch('src.providers.azure_openai.AzureOpenAI'):
+        with patch('llm_toolbridge.providers.azure_openai.AzureOpenAI'):
             provider = AzureOpenAIProvider(config)
             
             # Create a test tool with ParameterDefinition
@@ -111,7 +111,7 @@ class TestAzureOpenAIProvider:
             deployment_name="test-deployment"
         )
         
-        with patch('src.providers.azure_openai.AzureOpenAI'):
+        with patch('llm_toolbridge.providers.azure_openai.AzureOpenAI'):
             provider = AzureOpenAIProvider(config)
             
             # Create a mock OpenAI API response with tool calls
@@ -173,7 +173,7 @@ class TestAzureOpenAIProvider:
             assert len(tool_calls_invalid) == 1
             assert tool_calls_invalid[0].arguments == {"error": "Invalid JSON in arguments"}
     
-    @patch('src.providers.azure_openai.AzureOpenAI')
+    @patch('llm_toolbridge.providers.azure_openai.AzureOpenAI')
     def test_generate_sync_success(self, mock_azure_openai_class):
         """Test successful synchronous generation."""
         config = AzureOpenAIConfig(
@@ -214,7 +214,7 @@ class TestAzureOpenAIProvider:
         assert kwargs["model"] == "test-deployment"
         assert kwargs["messages"][0]["content"] == "Hello, how are you?"
     
-    @patch('src.providers.azure_openai.AzureOpenAI')
+    @patch('llm_toolbridge.providers.azure_openai.AzureOpenAI')
     def test_generate_sync_with_tools(self, mock_azure_openai_class):
         """Test generation with tools."""
         config = AzureOpenAIConfig(
@@ -288,7 +288,7 @@ class TestAzureOpenAIProvider:
         assert len(kwargs["tools"]) == 1
         assert kwargs["tools"][0]["function"]["name"] == "calculator"
     
-    @patch('src.providers.azure_openai.AzureOpenAI')
+    @patch('llm_toolbridge.providers.azure_openai.AzureOpenAI')
     def test_generate_sync_error_handling(self, mock_azure_openai_class):
         """Test error handling in generate_sync."""
         config = AzureOpenAIConfig(
