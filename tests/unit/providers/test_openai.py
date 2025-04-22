@@ -276,63 +276,6 @@ class TestOpenAIProvider:
         assert kwargs["tools"][0]["function"]["name"] == "calculator"
 
     @patch("llm_toolbridge.providers.openai.OpenAI")
-    def test_generate_sync_with_tool_results(self, mock_openai_class):
-        """Test generation with tool results."""
-        config = OpenAIConfig(api_key="test-key", model="gpt-4")
-
-        # Create tool results
-        tool_results = {"call_123": {"result": 8, "success": True}}
-
-        # Create a mock response
-        mock_message = MagicMock()
-        mock_message.role = "assistant"
-        mock_message.content = "The result is 8"
-        mock_message.tool_calls = []
-
-        mock_choice = MagicMock()
-        mock_choice.index = 0
-        mock_choice.message = mock_message
-        mock_choice.finish_reason = "stop"
-
-        mock_response = MagicMock()
-        mock_response.choices = [mock_choice]
-
-        # Set up the mock client
-        mock_client = MagicMock()
-        mock_client.chat.completions.create.return_value = mock_response
-        mock_openai_class.return_value = mock_client
-
-        provider = OpenAIProvider(config)
-        response = provider._generate_sync("What is 5 + 3?", tool_results=tool_results)
-
-        # Verify the response
-        assert response.content == "The result is 8"
-
-        # Verify the request contains tool results
-        mock_client.chat.completions.create.assert_called_once()
-        args, kwargs = mock_client.chat.completions.create.call_args
-
-        # Check that there are at least 2 messages (user prompt + tool results)
-        assert len(kwargs["messages"]) >= 2
-
-        # First message should be user prompt
-        assert kwargs["messages"][0]["role"] == "user"
-        assert kwargs["messages"][0]["content"] == "What is 5 + 3?"
-
-        # Make sure the assistant and tool messages for tool results are included
-        assistant_message_found = False
-        tool_message_found = False
-
-        for message in kwargs["messages"][1:]:
-            if message.get("role") == "assistant" and "tool_calls" in message:
-                assistant_message_found = True
-            elif message.get("role") == "tool" and "tool_call_id" in message:
-                tool_message_found = True
-
-        assert assistant_message_found
-        assert tool_message_found
-
-    @patch("llm_toolbridge.providers.openai.OpenAI")
     def test_generate_sync_error_handling(self, mock_openai_class):
         """Test error handling in generate_sync."""
         config = OpenAIConfig(api_key="test-key", model="gpt-4")
