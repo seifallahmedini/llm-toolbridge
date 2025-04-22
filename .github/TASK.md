@@ -49,8 +49,8 @@ This document tracks the tasks for the LLM Tool Bridge project. Each task should
 
 ## Phase 5: Testing and Documentation
 
-- ⚪ Write unit tests for core components
-- ⚪ Create integration tests for providers
+- 🟢 Write unit tests for core components (April 22, 2025)
+- 🟢 Create integration tests for providers
 - ⚪ Set up GitHub Actions for CI/CD
 - ⚪ Write API documentation with examples
 - ⚪ Create tutorial notebooks/examples
