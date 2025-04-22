@@ -7,6 +7,7 @@ from pydantic import ValidationError
 from llm_toolbridge.core.schema import ToolBridgeRequest, ToolResult, ToolBridgeResponse
 from llm_toolbridge.core.tool import Tool, ParameterDefinition
 
+
 def make_valid_tool() -> Tool:
     """
     Create a valid Tool instance for testing.
@@ -18,11 +19,16 @@ def make_valid_tool() -> Tool:
         name="adder",
         description="Adds two numbers.",
         parameters={
-            "a": ParameterDefinition(type="number", description="First number", required=True),
-            "b": ParameterDefinition(type="number", description="Second number", required=True)
+            "a": ParameterDefinition(
+                type="number", description="First number", required=True
+            ),
+            "b": ParameterDefinition(
+                type="number", description="Second number", required=True
+            ),
         },
-        version="1.0.0"
+        version="1.0.0",
     )
+
 
 def test_tool_bridge_request_expected_use():
     """
@@ -34,13 +40,14 @@ def test_tool_bridge_request_expected_use():
         tools=[tool],
         model="gpt-4",
         temperature=0.7,
-        max_tokens=100
+        max_tokens=100,
     )
     assert req.prompt == "Test prompt"
     assert req.tools is not None
     assert req.model == "gpt-4"
     assert req.temperature == 0.7
     assert req.max_tokens == 100
+
 
 def test_tool_bridge_request_edge_case():
     """
@@ -53,12 +60,14 @@ def test_tool_bridge_request_edge_case():
     assert req.temperature is None
     assert req.max_tokens is None
 
+
 def test_tool_bridge_request_failure_case():
     """
     Test ToolBridgeRequest fails if prompt is missing.
     """
     with pytest.raises(ValidationError):
         ToolBridgeRequest()
+
 
 def test_tool_result_expected_use():
     """
@@ -69,13 +78,14 @@ def test_tool_result_expected_use():
         call_id="abc123",
         result={"output": 42},
         error=None,
-        success=True
+        success=True,
     )
     assert result.tool_name == "my_tool"
     assert result.call_id == "abc123"
     assert result.result == {"output": 42}
     assert result.error is None
     assert result.success is True
+
 
 def test_tool_result_edge_case():
     """
@@ -88,12 +98,14 @@ def test_tool_result_edge_case():
     assert result.error is None
     assert result.success is True
 
+
 def test_tool_result_failure_case():
     """
     Test ToolResult fails if tool_name is missing.
     """
     with pytest.raises(ValidationError):
         ToolResult()
+
 
 def test_tool_bridge_response_expected_use():
     """
@@ -103,12 +115,13 @@ def test_tool_bridge_response_expected_use():
         content="LLM output",
         tool_results=[ToolResult(tool_name="t")],
         provider_name="openai",
-        usage={"tokens": 10}
+        usage={"tokens": 10},
     )
     assert resp.content == "LLM output"
     assert isinstance(resp.tool_results, list)
     assert resp.provider_name == "openai"
     assert resp.usage == {"tokens": 10}
+
 
 def test_tool_bridge_response_edge_case():
     """
@@ -119,6 +132,7 @@ def test_tool_bridge_response_edge_case():
     assert resp.tool_results == []
     assert resp.provider_name == "azure"
     assert resp.usage is None
+
 
 def test_tool_bridge_response_failure_case():
     """

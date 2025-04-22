@@ -20,6 +20,7 @@ class ParameterDefinition(BaseModel):
         required: Whether the parameter is required.
         default: Default value for the parameter if not provided.
     """
+
     type: Literal["string", "number", "integer", "boolean", "array", "object"]
     description: str
     enum: Optional[List[Any]] = None
@@ -38,12 +39,13 @@ class Tool(BaseModel):
         version: The version of the tool.
         function: The function to be called when this tool is invoked.
     """
+
     name: str
     description: str
     parameters: Dict[str, Union[ParameterDefinition, Dict[str, Any]]]
     version: str = "1.0.0"
     function: Optional[Callable] = None
-    
+
     class Config:
         arbitrary_types_allowed = True
 
@@ -61,8 +63,8 @@ class Tool(BaseModel):
                 "type": "object",
                 "properties": {},
                 "required": [],
-                "additionalProperties": False
-            }
+                "additionalProperties": False,
+            },
             # "version": self.version,
         }
 
@@ -111,5 +113,5 @@ class Tool(BaseModel):
         """
         if self.function is None:
             raise ValueError(f"Tool '{self.name}' has no associated function")
-        
+
         return self.function(**arguments)

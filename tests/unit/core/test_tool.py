@@ -15,9 +15,9 @@ def test_parameter_definition_creation():
         description="A test parameter",
         enum=["option1", "option2"],
         required=True,
-        default="option1"
+        default="option1",
     )
-    
+
     assert param.type == "string"
     assert param.description == "A test parameter"
     assert "option1" in param.enum
@@ -27,11 +27,8 @@ def test_parameter_definition_creation():
 
 def test_parameter_definition_defaults():
     """Test default values for parameter definitions."""
-    param = ParameterDefinition(
-        type="integer",
-        description="A test parameter"
-    )
-    
+    param = ParameterDefinition(type="integer", description="A test parameter")
+
     assert param.type == "integer"
     assert param.description == "A test parameter"
     assert param.enum is None
@@ -47,18 +44,17 @@ def test_tool_creation():
         description="A test tool",
         parameters={
             "param1": ParameterDefinition(
-                type="string",
-                description="A string parameter"
+                type="string", description="A string parameter"
             ),
             "param2": ParameterDefinition(
                 type="integer",
                 description="An integer parameter",
                 required=False,
-                default=0
-            )
-        }
+                default=0,
+            ),
+        },
     )
-    
+
     assert tool.name == "test_tool"
     assert tool.description == "A test tool"
     assert "param1" in tool.parameters
@@ -76,19 +72,16 @@ def test_tool_creation_with_dict_parameters():
         name="test_tool",
         description="A test tool",
         parameters={
-            "param1": {
-                "type": "string",
-                "description": "A string parameter"
-            },
+            "param1": {"type": "string", "description": "A string parameter"},
             "param2": {
                 "type": "integer",
                 "description": "An integer parameter",
                 "required": False,
-                "default": 0
-            }
-        }
+                "default": 0,
+            },
+        },
     )
-    
+
     assert tool.name == "test_tool"
     assert tool.description == "A test tool"
     assert "param1" in tool.parameters
@@ -108,20 +101,19 @@ def test_tool_to_dict():
         description="A test tool",
         parameters={
             "param1": ParameterDefinition(
-                type="string",
-                description="A string parameter"
+                type="string", description="A string parameter"
             ),
             "param2": {
                 "type": "integer",
                 "description": "An integer parameter",
                 "required": False,
-                "default": 0
-            }
-        }
+                "default": 0,
+            },
+        },
     )
-    
+
     tool_dict = tool.to_dict()
-    
+
     assert tool_dict["name"] == "test_tool"
     assert tool_dict["description"] == "A test tool"
     assert "properties" in tool_dict["parameters"]
@@ -134,41 +126,41 @@ def test_tool_to_dict():
 
 def test_tool_invoke_success():
     """Test successfully invoking a tool with arguments."""
+
     # Test function to associate with the tool
     def add_numbers(x: int, y: int) -> int:
         return x + y
-    
+
     # Create a tool with the function
     tool = Tool(
         name="add",
         description="Add two numbers",
         parameters={
             "x": {"type": "integer", "description": "First number"},
-            "y": {"type": "integer", "description": "Second number"}
+            "y": {"type": "integer", "description": "Second number"},
         },
-        function=add_numbers
+        function=add_numbers,
     )
-    
+
     result = tool.invoke({"x": 5, "y": 3})
     assert result == 8
 
 
 def test_tool_invoke_with_extra_args():
     """Test invoking a tool with extra arguments (edge case)."""
+
     # Test function that ignores extra arguments
     def greet(name: str, **kwargs) -> str:
         return f"Hello, {name}!"
-    
+
     # Create a tool with the function
     tool = Tool(
         name="greet",
         description="Greet a person",
-        parameters={
-            "name": {"type": "string", "description": "Person's name"}
-        },
-        function=greet
+        parameters={"name": {"type": "string", "description": "Person's name"}},
+        function=greet,
     )
-    
+
     # Function should work even with extra arguments
     result = tool.invoke({"name": "John", "extra": "ignored"})
     assert result == "Hello, John!"
@@ -179,15 +171,13 @@ def test_tool_invoke_failure():
     tool = Tool(
         name="empty_tool",
         description="A tool with no function",
-        parameters={
-            "param1": {"type": "string", "description": "A parameter"}
-        }
+        parameters={"param1": {"type": "string", "description": "A parameter"}},
     )
-    
+
     # Tool has no function, should raise ValueError
     with pytest.raises(ValueError) as excinfo:
         tool.invoke({"param1": "value"})
-    
+
     assert "has no associated function" in str(excinfo.value)
 
 
@@ -198,20 +188,16 @@ def test_tool_missing_required_parameter():
         description="A test tool",
         parameters={
             "required_param": ParameterDefinition(
-                type="string",
-                description="A required parameter",
-                required=True
+                type="string", description="A required parameter", required=True
             ),
             "optional_param": ParameterDefinition(
-                type="string",
-                description="An optional parameter",
-                required=False
-            )
-        }
+                type="string", description="An optional parameter", required=False
+            ),
+        },
     )
-    
+
     tool_dict = tool.to_dict()
-    
+
     assert "required_param" in tool_dict["parameters"]["required"]
     assert "optional_param" not in tool_dict["parameters"]["required"]
 
@@ -225,12 +211,16 @@ def test_enum_parameters():
             "color": ParameterDefinition(
                 type="string",
                 description="Choose a color",
-                enum=["red", "green", "blue"]
+                enum=["red", "green", "blue"],
             )
-        }
+        },
     )
-    
+
     tool_dict = tool.to_dict()
-    
+
     assert "enum" in tool_dict["parameters"]["properties"]["color"]
-    assert tool_dict["parameters"]["properties"]["color"]["enum"] == ["red", "green", "blue"]
+    assert tool_dict["parameters"]["properties"]["color"]["enum"] == [
+        "red",
+        "green",
+        "blue",
+    ]

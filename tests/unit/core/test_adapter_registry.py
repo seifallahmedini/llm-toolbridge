@@ -7,15 +7,20 @@ from llm_toolbridge.core.adapter_registry import AdapterRegistry
 from llm_toolbridge.core.adapter import BaseProviderAdapter
 from llm_toolbridge.core.provider import Provider, ProviderConfig
 
+
 class DummyProvider(Provider):
     def __init__(self, config: ProviderConfig):
         self.config = config
+
     async def generate(self, prompt, tools=None, tool_results=None, **kwargs):
         pass
+
     def format_tools_for_provider(self, tools):
         return []
+
     def parse_tool_calls(self, raw_response):
         return []
+
 
 class DummyAdapter(BaseProviderAdapter):
     def __init__(self, provider: Provider):
@@ -45,6 +50,7 @@ class DummyAdapter(BaseProviderAdapter):
         """
         return None
 
+
 @pytest.fixture(autouse=True)
 def clear_registry():
     # Clear registry before each test to avoid cross-test pollution
@@ -52,12 +58,14 @@ def clear_registry():
     yield
     AdapterRegistry._registry.clear()
 
+
 def test_register_and_get_adapter_class():
     """
     Test registering and retrieving an adapter class.
     """
     AdapterRegistry.register("dummy", DummyAdapter)
     assert AdapterRegistry.get_adapter_class("dummy") is DummyAdapter
+
 
 def test_register_duplicate_provider_raises():
     """
@@ -67,12 +75,14 @@ def test_register_duplicate_provider_raises():
     with pytest.raises(ValueError):
         AdapterRegistry.register("dummy", DummyAdapter)
 
+
 def test_get_adapter_class_unregistered_provider():
     """
     Test getting an adapter class for an unregistered provider raises KeyError.
     """
     with pytest.raises(KeyError):
         AdapterRegistry.get_adapter_class("not_registered")
+
 
 def test_create_adapter_expected_use():
     """
@@ -84,6 +94,7 @@ def test_create_adapter_expected_use():
     assert isinstance(adapter, DummyAdapter)
     assert adapter.provider is provider
 
+
 def test_create_adapter_unregistered_provider():
     """
     Test creating an adapter for an unregistered provider raises KeyError.
@@ -91,6 +102,7 @@ def test_create_adapter_unregistered_provider():
     provider = DummyProvider(ProviderConfig())
     with pytest.raises(KeyError):
         AdapterRegistry.create_adapter("not_registered", provider)
+
 
 def test_get_available_providers_edge_case():
     """

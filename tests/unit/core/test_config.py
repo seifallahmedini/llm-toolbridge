@@ -29,13 +29,13 @@ def test_config_with_values():
             "azure_openai": {
                 "api_key": "test_key",
                 "endpoint": "https://test-endpoint.openai.azure.com",
-                "deployment_name": "gpt-4"
+                "deployment_name": "gpt-4",
             }
         },
         log_level="DEBUG",
-        cache_dir="/tmp/cache"
+        cache_dir="/tmp/cache",
     )
-    
+
     assert config.default_provider == "azure_openai"
     assert "azure_openai" in config.provider_configs
     assert config.provider_configs["azure_openai"]["api_key"] == "test_key"
@@ -48,7 +48,7 @@ def test_save_and_load_config():
     # Create a temporary config file
     with tempfile.NamedTemporaryFile(delete=False, suffix=".json") as temp:
         temp_path = temp.name
-    
+
     try:
         # Create and save a config
         config = ToolBridgeConfig(
@@ -56,12 +56,12 @@ def test_save_and_load_config():
             provider_configs={
                 "azure_openai": {
                     "api_key": "test_key",
-                    "endpoint": "https://test-endpoint.openai.azure.com"
+                    "endpoint": "https://test-endpoint.openai.azure.com",
                 }
-            }
+            },
         )
         ConfigManager.save_config(config, temp_path)
-        
+
         # Load the config and verify
         loaded_config = ConfigManager.load_config(temp_path)
         assert loaded_config.default_provider == "azure_openai"
@@ -78,7 +78,7 @@ def test_load_nonexistent_config():
     # Use a path that definitely doesn't exist
     non_existent_path = "/path/to/nonexistent/config.json"
     config = ConfigManager.load_config(non_existent_path)
-    
+
     # Should return default config
     assert isinstance(config, ToolBridgeConfig)
     assert config.default_provider is None
@@ -91,7 +91,7 @@ def test_load_invalid_json_config():
     with tempfile.NamedTemporaryFile(delete=False, suffix=".json") as temp:
         temp.write(b"This is not valid JSON")
         temp_path = temp.name
-    
+
     try:
         # Should return default config without raising an exception
         config = ConfigManager.load_config(temp_path)
@@ -109,17 +109,15 @@ def test_get_provider_config():
         provider_configs={
             "azure_openai": {
                 "api_key": "test_key",
-                "endpoint": "https://test-endpoint.openai.azure.com"
+                "endpoint": "https://test-endpoint.openai.azure.com",
             },
-            "openai": {
-                "api_key": "another_key"
-            }
+            "openai": {"api_key": "another_key"},
         }
     )
-    
+
     azure_config = ConfigManager.get_provider_config("azure_openai", config)
     assert azure_config["api_key"] == "test_key"
-    
+
     openai_config = ConfigManager.get_provider_config("openai", config)
     assert openai_config["api_key"] == "another_key"
 
@@ -127,13 +125,9 @@ def test_get_provider_config():
 def test_get_nonexistent_provider_config():
     """Test getting configuration for a provider that doesn't exist raises KeyError."""
     config = ToolBridgeConfig(
-        provider_configs={
-            "azure_openai": {
-                "api_key": "test_key"
-            }
-        }
+        provider_configs={"azure_openai": {"api_key": "test_key"}}
     )
-    
+
     with pytest.raises(KeyError):
         ConfigManager.get_provider_config("nonexistent", config)
 
@@ -143,13 +137,11 @@ def test_create_dirs_on_save():
     # Create a temporary directory
     with tempfile.TemporaryDirectory() as temp_dir:
         nested_path = os.path.join(temp_dir, "nested", "path", "config.json")
-        
-        config = ToolBridgeConfig(
-            default_provider="azure_openai"
-        )
-        
+
+        config = ToolBridgeConfig(default_provider="azure_openai")
+
         # Should create directories and not raise an exception
         ConfigManager.save_config(config, nested_path)
-        
+
         # Verify file was created
         assert os.path.exists(nested_path)

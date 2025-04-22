@@ -34,11 +34,11 @@ def load_dotenv(dotenv_path: Optional[str] = None) -> Dict[str, str]:
             if potential_path.exists():
                 dotenv_path = str(potential_path)
                 break
-    
+
     # If no .env file found, return empty dict
     if dotenv_path is None or not Path(dotenv_path).exists():
         return {}
-    
+
     # Parse the .env file
     loaded_vars = {}
     with open(dotenv_path, "r") as file:
@@ -47,22 +47,23 @@ def load_dotenv(dotenv_path: Optional[str] = None) -> Dict[str, str]:
             # Skip empty lines and comments
             if not line or line.startswith("#"):
                 continue
-                
+
             # Parse key-value pairs
             if "=" in line:
                 key, value = line.split("=", 1)
                 key = key.strip()
                 value = value.strip()
-                
+
                 # Remove quotes if present
-                if (value.startswith('"') and value.endswith('"')) or \
-                   (value.startswith("'") and value.endswith("'")):
+                if (value.startswith('"') and value.endswith('"')) or (
+                    value.startswith("'") and value.endswith("'")
+                ):
                     value = value[1:-1]
-                
+
                 # Set environment variable and track it
                 os.environ[key] = value
                 loaded_vars[key] = value
-    
+
     return loaded_vars
 
 

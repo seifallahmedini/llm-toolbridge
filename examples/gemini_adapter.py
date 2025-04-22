@@ -24,17 +24,11 @@ calculator_tool = Tool(
         "operation": ParameterDefinition(
             type="string",
             description="The arithmetic operation to perform",
-            enum=["add", "subtract", "multiply", "divide"]
+            enum=["add", "subtract", "multiply", "divide"],
         ),
-        "x": ParameterDefinition(
-            type="number",
-            description="The first operand"
-        ),
-        "y": ParameterDefinition(
-            type="number",
-            description="The second operand"
-        )
-    }
+        "x": ParameterDefinition(type="number", description="The first operand"),
+        "y": ParameterDefinition(type="number", description="The second operand"),
+    },
 )
 
 # Define a weather tool
@@ -44,15 +38,15 @@ weather_tool = Tool(
     parameters={
         "location": ParameterDefinition(
             type="string",
-            description="The city and optionally the country (e.g., 'New York, US')"
+            description="The city and optionally the country (e.g., 'New York, US')",
         ),
         "unit": ParameterDefinition(
             type="string",
             description="Temperature unit (celsius or fahrenheit)",
             enum=["celsius", "fahrenheit"],
-            default="celsius"
-        )
-    }
+            default="celsius",
+        ),
+    },
 )
 
 
@@ -72,7 +66,7 @@ def calculator(operation: str, x: float, y: float) -> Dict[str, Any]:
         result = x / y
     else:
         return {"error": f"Unknown operation: {operation}", "result": None}
-    
+
     return {"operation": operation, "x": x, "y": y, "result": result}
 
 
@@ -80,18 +74,25 @@ def calculator(operation: str, x: float, y: float) -> Dict[str, Any]:
 def get_weather(location: str, unit: str = "celsius") -> Dict[str, Any]:
     """
     Simulates getting weather for a location.
-    
+
     Args:
         location: The city and optionally the country.
         unit: Temperature unit (celsius or fahrenheit).
-        
+
     Returns:
         Dict containing weather information.
     """
     # In a real application, you would call a weather API here
     # This is a simulation that returns random weather data
-    weather_conditions = ["sunny", "partly cloudy", "cloudy", "rainy", "thunderstorm", "snowy"]
-    
+    weather_conditions = [
+        "sunny",
+        "partly cloudy",
+        "cloudy",
+        "rainy",
+        "thunderstorm",
+        "snowy",
+    ]
+
     # Generate random temperature based on unit
     if unit == "celsius":
         temperature = round(random.uniform(-5, 35), 1)
@@ -99,14 +100,14 @@ def get_weather(location: str, unit: str = "celsius") -> Dict[str, Any]:
     else:  # fahrenheit
         temperature = round(random.uniform(20, 95), 1)
         temp_unit = "°F"
-    
+
     # Generate random humidity and wind speed
     humidity = random.randint(30, 95)
     wind_speed = round(random.uniform(0, 30), 1)
-    
+
     # Pick a random weather condition
     condition = random.choice(weather_conditions)
-    
+
     return {
         "location": location,
         "temperature": temperature,
@@ -114,7 +115,7 @@ def get_weather(location: str, unit: str = "celsius") -> Dict[str, Any]:
         "condition": condition,
         "humidity": humidity,
         "wind_speed": wind_speed,
-        "unit_requested": unit
+        "unit_requested": unit,
     }
 
 
@@ -125,22 +126,23 @@ def direct_provider_example():
     # Load environment variables from .env file
     loaded_vars = load_dotenv()
     if loaded_vars:
-        print(f"✅ Loaded environment variables from .env file: {', '.join(loaded_vars.keys())}")
+        print(
+            f"✅ Loaded environment variables from .env file: {', '.join(loaded_vars.keys())}"
+        )
     else:
-        print("⚠️ No .env file found. Using default values or explicit environment variables.")
-    
+        print(
+            "⚠️ No .env file found. Using default values or explicit environment variables."
+        )
+
     # Get API key from environment
     api_key = get_env_var("GOOGLE_API_KEY")
     if not api_key:
         print("Error: GOOGLE_API_KEY environment variable is not set")
         return
-        
+
     # Configure the provider
-    config = GeminiConfig(
-        api_key=api_key,
-        model="gemini-1.5-pro"
-    )
-    
+    config = GeminiConfig(api_key=api_key, model="gemini-1.5-pro")
+
     # Create provider instance
     provider = GeminiProvider(config)
 
@@ -155,20 +157,14 @@ def direct_provider_example():
             "operation": ParameterDefinition(
                 type="string",
                 description="The operation to perform",
-                enum=["add", "subtract", "multiply", "divide"]
+                enum=["add", "subtract", "multiply", "divide"],
             ),
-            "x": ParameterDefinition(
-                type="number",
-                description="First operand"
-            ),
-            "y": ParameterDefinition(
-                type="number",
-                description="Second operand"
-            )
+            "x": ParameterDefinition(type="number", description="First operand"),
+            "y": ParameterDefinition(type="number", description="Second operand"),
         },
-        function=calculator
+        function=calculator,
     )
-    
+
     # Define the weather tool
     weather_tool = Tool(
         name="get_weather",
@@ -176,16 +172,16 @@ def direct_provider_example():
         parameters={
             "location": ParameterDefinition(
                 type="string",
-                description="The city and optionally the country (e.g., 'New York, US')"
+                description="The city and optionally the country (e.g., 'New York, US')",
             ),
             "unit": ParameterDefinition(
                 type="string",
                 description="Temperature unit (celsius or fahrenheit)",
                 enum=["celsius", "fahrenheit"],
-                default="celsius"
-            )
+                default="celsius",
+            ),
         },
-        function=get_weather
+        function=get_weather,
     )
 
     # Register the tools with the bridge
@@ -198,7 +194,7 @@ def direct_provider_example():
     1. If I have 25 apples and give away 7, how many do I have left?
     2. What's the current weather in New York?
     """
-    
+
     # Send a request with tools
     response = bridge.execute_sync(prompt)
     print(f"Response: {response.content}")
@@ -208,6 +204,6 @@ if __name__ == "__main__":
     print("Google Gemini Example")
     print("---------------------")
     print("Make sure to set the GOOGLE_API_KEY environment variable.")
-    
+
     # Run the examples
     direct_provider_example()
